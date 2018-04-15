@@ -53,7 +53,7 @@
               </div>
               <div class="panel-body">
                 Numeros: {{ta.arrayNumeros}}<br>
-                Respuesta: {{ta.stringDecimal}}
+                Respuesta: {{ta.sumaPares}}
                </div>
             </div>
             <div class="panel panel-warning" >
@@ -79,60 +79,66 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript">
-    $("button").click(function(){
-      console.log('Prueba');
-        $.ajax({url: "index.php", success: function(result){
-            console.log(result);
-        }});
-  });
-  </script>
+
   <script type="text/javascript">
     var myApp = angular.module("app", []);
     myApp.controller("twitterApp", function ($q, $http, $scope,$timeout,twitterFactory) {
         var sm = this;
         sm.verTwets = false;
         sm.valorPI = Math.PI;
-        sm.vowel_list = 'aeiou';
         sm.textVocales = 'Se esta haciendo un proceso para capturar vocales';
-        sm.vocalesEncontradas = [];
         sm.arrayNumeros = [{'value':3},{'value':32},{'value':15},{'value':17},{'value':25},{'value':22}];
-        sm.arrayPI = sm.valorPI.toString().split('.');
-        sm.stringDecimal = sm.arrayPI[1].substring(10,9);
 
-        sm.sumaPares = 0;
-        angular.forEach(sm.arrayNumeros, function(number, key) {
-          if(number.value % 2 == 0) {
-            sm.sumaPares = sm.sumaPares + number.value ;
-          }
-        });
-
-        for(var x = 0; x < sm.textVocales.length ; x++){
-          if (sm.vowel_list.indexOf(sm.textVocales[x]) !== -1)
-          {
-            sm.vocalesEncontradas.push(sm.textVocales[x]) ;
-          }
-
+        sm.getPiDecimal = function(){
+          sm.arrayPI = sm.valorPI.toString().split('.');
+          return sm.arrayPI[1].substring(10,9);
         }
 
+        sm.getSumEvens  = function(array){
+          var suma = 0;
+          angular.forEach(array, function(number, key) {
+            if(number.value % 2 == 0) {
+              suma = suma + number.value ;
+            }
+          });
+
+          return suma;
+        }
+
+        sm.getOrderedVowels = function(texto){
+          var vocales = [];
+          var vowel_list = 'aeiou';
+          for(var x = 0; x < texto.length ; x++){
+            if (vowel_list.indexOf(texto[x]) !== -1)
+            {
+              vocales.push(texto[x]) ;
+            }
+          }
+
+          return vocales;
+        }
+
+        sm.getFirstId = function(){
+          twitterFactory.getUsers().then(function (response) {
+              sm.user = response[0];
+              console.log(response[0]);
+          }, function (err) {
+              alert(err);
+          });
+        }
+
+        sm.stringDecimal = sm.getPiDecimal();
+        sm.sumaPares = sm.getSumEvens(sm.arrayNumeros);
+        sm.vocalesEncontradas = sm.getOrderedVowels(sm.textVocales);
+        sm.getFirstId();
 
 
-        console.log(sm.arrayPI[1].toString());
-        console.log(sm.stringDecimal);
-        console.log(sm.arrayNumeros);
-        console.log(sm.sumaPares);
-        //console.log(sm.vocalesEncontradas.sort());
-        /*twitterFactory.getTwets().then(function (response) {
+        twitterFactory.getTwets().then(function (response) {
             sm.tweets = response;
         }, function (err) {
             alert(err);
-        });*/
-        twitterFactory.getUsers().then(function (response) {
-            sm.user = response[0];
-            console.log(sm.user);
-        }, function (err) {
-            alert(err);
         });
+
     });
 
     myApp.factory('twitterFactory', function ($http, $q) {
@@ -151,7 +157,6 @@
            },
            getUsers: function (idreuso) {
                var deferred = $q.defer();
-               /* Validacion para la opcion por default del select*/
                $http.get('https://jsonplaceholder.typicode.com/users')
                        .success(function (data, status, headers, config) {
                            deferred.resolve(data);
