@@ -3,7 +3,7 @@
 2) que tanto conoces sobre facturacion electronica?
 No he interactuado a nivel de desarrollo pero si conosco el proceso general actual de emision de facturas electronicas.
 3) que tanto conoces sobre procesos de CI/CD?
-Este ultimo año el desarrollo en equipo logramos integrar cada requerimiento de manera sostenible haciendo pruebas y usando herramientas que nos permite el manejo de versiones (Git Tortoise)
+Este ultimo año el desarrollo en equipo logramos integrar cada requerimiento de manera sostenible haciendo pruebas y usando herramientas que nos permite el manejo de versiones (Git Tortoise) y trabajabamos con un servidor de pruebas.
 4) que tanto conoces sobre linux?
   He interactuado mucho con servidores linux ya que los clientes que atendia trabajaban con linux
 5) que te gusta y NO te gusta del lenguaje que usas?
