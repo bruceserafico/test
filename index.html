@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
+</head>
+
+<body class="width-80 center">
+  <div ng-app="app">
+    <div class="page-content" ng-controller="twitterApp as ta">
+    	<div class="bs-example" ng-show="ta.verTwets==true" data-example-id="contextual-panels">
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title"><button class="btn btn-danger" ng-click="ta.verTwets=false">Atras</button> Ultimos tweets</h3>
+          </div>
+          <div class="panel-body">
+            <div class="panel panel-info" ng-repeat="tweet in ta.tweets">
+              <div class="panel-heading">
+                <h3 class="panel-title"><img class="img-circle" ng-src="{{tweet.url}}" alt=""> {{tweet.fecha}}</h3>
+              </div>
+              <div class="panel-body"> {{tweet.text}} </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bs-example" ng-show="ta.verTwets==false" data-example-id="contextual-panels">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title"><button class="btn btn-primary" ng-click="ta.verTwets=true">Ver tweets</button> Retos</h3>
+          </div>
+          <div class="panel-body">
+            <div class="panel panel-warning" >
+              <div class="panel-heading">
+                <h3 class="panel-title"> getPiDecimal </h3>
+              </div>
+              <div class="panel-body">
+                PI: {{ta.valorPI}}<br>
+                Respuesta: {{ta.stringDecimal}}
+               </div>
+            </div>
+            <div class="panel panel-warning" >
+              <div class="panel-heading">
+                <h3 class="panel-title"> getSumEvens </h3>
+              </div>
+              <div class="panel-body">
+                Numeros: {{ta.arrayNumeros}}<br>
+                Respuesta: {{ta.stringDecimal}}
+               </div>
+            </div>
+            <div class="panel panel-warning" >
+              <div class="panel-heading">
+                <h3 class="panel-title"> getOrderedVowels  </h3>
+              </div>
+              <div class="panel-body">
+                Texto: {{ta.textVocales}}<br>
+                Respuesta: {{ta.vocalesEncontradas}}
+               </div>
+            </div>
+            <div class="panel panel-warning" >
+              <div class="panel-heading">
+                <h3 class="panel-title"> getFirstId   </h3>
+              </div>
+              <div class="panel-body">
+
+                Respuesta: {{ta.user}}
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    $("button").click(function(){
+      console.log('Prueba');
+        $.ajax({url: "index.php", success: function(result){
+            console.log(result);
+        }});
+  });
+  </script>
+  <script type="text/javascript">
+    var myApp = angular.module("app", []);
+    myApp.controller("twitterApp", function ($q, $http, $scope,$timeout,twitterFactory) {
+        var sm = this;
+        sm.verTwets = false;
+        sm.valorPI = Math.PI;
+        sm.vowel_list = 'aeiou';
+        sm.textVocales = 'Se esta haciendo un proceso para capturar vocales';
+        sm.vocalesEncontradas = [];
+        sm.arrayNumeros = [{'value':3},{'value':32},{'value':15},{'value':17},{'value':25},{'value':22}];
+        sm.arrayPI = sm.valorPI.toString().split('.');
+        sm.stringDecimal = sm.arrayPI[1].substring(10,9);
+
+        sm.sumaPares = 0;
+        angular.forEach(sm.arrayNumeros, function(number, key) {
+          if(number.value % 2 == 0) {
+            sm.sumaPares = sm.sumaPares + number.value ;
+          }
+        });
+
+        for(var x = 0; x < sm.textVocales.length ; x++){
+          if (sm.vowel_list.indexOf(sm.textVocales[x]) !== -1)
+          {
+            sm.vocalesEncontradas.push(sm.textVocales[x]) ;
+          }
+
+        }
+
+
+
+        console.log(sm.arrayPI[1].toString());
+        console.log(sm.stringDecimal);
+        console.log(sm.arrayNumeros);
+        console.log(sm.sumaPares);
+        //console.log(sm.vocalesEncontradas.sort());
+        /*twitterFactory.getTwets().then(function (response) {
+            sm.tweets = response;
+        }, function (err) {
+            alert(err);
+        });*/
+        twitterFactory.getUsers().then(function (response) {
+            sm.user = response[0];
+            console.log(sm.user);
+        }, function (err) {
+            alert(err);
+        });
+    });
+
+    myApp.factory('twitterFactory', function ($http, $q) {
+       return{
+           getTwets: function (idreuso) {
+               var deferred = $q.defer();
+               /* Validacion para la opcion por default del select*/
+               $http.get('index.php')
+                       .success(function (data, status, headers, config) {
+                           deferred.resolve(data);
+                       })
+                       .error(function (data, status, header, config) {
+                       });
+
+               return deferred.promise;
+           },
+           getUsers: function (idreuso) {
+               var deferred = $q.defer();
+               /* Validacion para la opcion por default del select*/
+               $http.get('https://jsonplaceholder.typicode.com/users')
+                       .success(function (data, status, headers, config) {
+                           deferred.resolve(data);
+                       })
+                       .error(function (data, status, header, config) {
+                       });
+
+               return deferred.promise;
+           }
+       }
+   });
+
+</script>
+</body>
+</html>
