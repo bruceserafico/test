@@ -18,12 +18,8 @@ if (!isset($_SESSION['access_token'])) {
 	$access_token = $_SESSION['access_token'];
 	$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
 
-	// getting basic user info
 	$user = $connection->get("account/verify_credentials");
 
-	// printing username on screen
-	//echo "Welcome " . $user->screen_name . '<br>';
-	// getting recent tweeets by user 'snowden' on twitter
 	$tweets = $connection->get('statuses/user_timeline', ['count' => 8, 'exclude_replies' => true, 'screen_name' => 'ThePracticalDev', 'include_rts' => false]);
 	$totalTweets[] = $tweets;
 	$page = 0;
@@ -33,20 +29,15 @@ if (!isset($_SESSION['access_token'])) {
 		$totalTweets[] = $tweets;
 		$page += 1;
 	}
-	// printing recent tweets on screen
 	$start = 1;
 	$response = array();
 	foreach ($totalTweets as $page) {
 		foreach ($page as $key) {
-			//echo $start . ':' . $key->text . '<br>';
-			//echo "<pre>";
 			$array['fecha'] = $key->created_at;
 			$array['text'] = $key->text;
 			$array['url'] = $key->user->profile_image_url;
-			//echo print_r($key);
 
 			array_push($response,$array);
-			//echo "</pre>";
 
 			$start++;
 		}
